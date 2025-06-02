@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student HR & Temp Slideshow</title>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/white.css" id="theme">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="main.js" defer></script>
+  <style>
+    input[type="range"] { width: 50%; }
+    #charts svg { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Slide 1: Exam Type -->
+      <section>
+        <h2>Select Exam Type</h2>
+        <label for="examType">Exam Type:</label>
+        <select id="examType">
+          <option value="midterm1">Midterm 1</option>
+          <option value="midterm2">Midterm 2</option>
+          <option value="final">Final</option>
+        </select>
+        <br><br>
+        <button onclick="Reveal.next()">Next</button>
+      </section>
+
+      <!-- Slide 2: Heart Rate -->
+      <section>
+        <h2>Select Avg Heart Rate</h2>
+        <label for="avgHR">Average HR:</label>
+        <input type="range" id="avgHR" min="60" max="140" value="90" oninput="hrValue.textContent = this.value">
+        <span id="hrValue">90</span>
+        <br><br>
+        <button onclick="Reveal.prev()">Back</button>
+        <button onclick="Reveal.next()">Next</button>
+      </section>
+
+      <!-- Slide 3: Temperature -->
+      <section>
+        <h2>Select Avg Temperature</h2>
+        <label for="avgTemp">Average Temp (°C):</label>
+        <input type="range" id="avgTemp" min="19" max="36" step="0.1" value="23" oninput="tempValue.textContent = this.value">
+        <span id="tempValue">23</span>
+        <br><br>
+        <button onclick="Reveal.prev()">Back</button>
+        <button onclick="Reveal.next()">Next</button>
+      </section>
+
+      <!-- Slide 4: Charts -->
+      <section>
+        <h2>Closest Student & Chart</h2>
+        <button onclick="loadAndPlot()">Find Closest Student & Plot</button>
+        <div id="charts">
+          <h3 id="selectedStudentTitle"></h3>
+          <svg id="hrChart" width="800" height="300"></svg>
+          <svg id="tempChart" width="800" height="300"></svg>
+        </div>
+        <br><br>
+        <button onclick="Reveal.prev()">Back</button>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize();
+  </script>
+</body>
+</html>
