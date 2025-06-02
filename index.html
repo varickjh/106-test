@@ -29,19 +29,20 @@
         <button onclick="Reveal.next()">Next</button>
       </section>
 
-      <!-- Slide 2: Heart Rate -->
+      <!-- Slide 2: Heart Rate
+      <section>
+        
+        <button onclick="Reveal.prev()">Back</button>
+        <button onclick="Reveal.next()">Next</button>
+      </section> -->
+
+      <!-- Slide 3: Temperature -->
       <section>
         <h2>Select Avg Heart Rate</h2>
         <label for="avgHR">Average HR:</label>
         <input type="range" id="avgHR" min="60" max="140" value="90" oninput="hrValue.textContent = this.value">
         <span id="hrValue">90</span>
         <br><br>
-        <button onclick="Reveal.prev()">Back</button>
-        <button onclick="Reveal.next()">Next</button>
-      </section>
-
-      <!-- Slide 3: Temperature -->
-      <section>
         <h2>Select Avg Temperature</h2>
         <label for="avgTemp">Average Temp (°C):</label>
         <input type="range" id="avgTemp" min="19" max="36" step="0.1" value="23" oninput="tempValue.textContent = this.value">
