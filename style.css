@@ -1,0 +1,51 @@
+.reveal section {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-choice {
+  background-color: #3f6fe2;
+  color: white;
+  padding: 12px 24px;
+  font-size: 0.6em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.exam-choice:hover {
+  background-color: #2e5dd1;
+}
+
+.exam-choice.selected {
+  background-color: #1e88e5;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.4);
+}
+
+.reveal .slides section {
+  overflow-y: auto !important;
+  max-height: 90vh;
+  padding: 20px;
+}
+
+#charts svg {
+  max-width: 95%;
+  height: auto;
+  display: block;
+  margin: 0 auto 0px;
+}
+
+.reveal .progress:after {
+    content: "";
+    display: block;
+    position: absolute;
+    /* height: 10px; */
+    width: 100%;
+    /* top: -10px; */
+}

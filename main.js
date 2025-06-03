@@ -1,6 +1,24 @@
 const studentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
+let exam = null;
+document.querySelectorAll(".exam-choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        // Remove existing selection styling
+        document.querySelectorAll(".exam-choice").forEach(b => b.classList.remove("selected"));
+        
+        // Mark new selection
+        btn.classList.add("selected");
+        exam = btn.getAttribute("data-value");
+
+        // Store value if syncing with hidden input
+        const hiddenSelect = document.getElementById("examType");
+        if (hiddenSelect) hiddenSelect.value = exam;
+
+        // Wait a moment for visual feedback, then move to next slide
+        setTimeout(() => Reveal.next(), 500); // optional delay for smoothness
+      });
+    });
+
 function loadAndPlot() {
-    const exam = document.getElementById("examType").value;
     const inputHR = parseFloat(document.getElementById("avgHR").value);
     const inputTemp = parseFloat(document.getElementById("avgTemp").value);
 
@@ -125,7 +143,8 @@ function loadAndPlot() {
     g.append("text")
      .attr("x", -margin.left + 10)
      .attr("y", -5)
-     .attr("font-weight", "bold")
+    //  .attr("font-weight", "bold")
+     .attr("font-size", "14px")
      .text(yLabel);
 
     // Add legend
@@ -219,7 +238,8 @@ function loadAndPlot() {
     g.append("text")
      .attr("x", -margin.left + 10)
      .attr("y", -5)
-     .attr("font-weight", "bold")
+    //  .attr("font-weight", "bold")
+     .attr("font-size", "14px")
      .text(yLabel);
 
     // Add legend

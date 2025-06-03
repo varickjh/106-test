@@ -5,28 +5,88 @@
   <title>Student HR & Temp Slideshow</title>
   <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
   <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="style.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="main.js" defer></script>
   <style>
-    input[type="range"] { width: 50%; }
-    #charts svg { margin-top: 20px; }
+    input[type="range"] { width: 60%; }
+    #charts svg { margin-top: 10px; }
   </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
+      <!-- Main Title Slide -->
+      <section data-auto-animate>
+        <h1 style="font-size: 2em; font-weight: 800; color: #0d47a1;">THE PRESSURE PARADOX</h1>
+        <p style="font-size: 1em; font-weight: 600; margin-top: -10px;">Does Stress Fuel or Fracture Exam Performance?</p>
+
+        <button onclick="Reveal.next()" style="
+          margin-top: 60px;
+          background: #1e88e5;
+          border: none;
+          color: white;
+          padding: 14px 30px;
+          font-size: 1.1em;
+          font-weight: bold;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: 0.3s ease;">PLAY</button>
+
+        <p style="margin-top: 80px; font-size: 0.5em; color: #444; opacity: 60%;">
+          Fun Project By Varick Hasim, Ravi Harun, Rayyan Khalid
+        </p>
+      </section>
+
+      <!-- Slide 0: Introduction -->
+      <section>
+        <div style="text-align: center; max-width: 900px; margin: auto;">
+          <p style="font-size: 0.7em; line-height: 1.6em; margin-bottom: 20px;">
+            It is a common notion that the more stressed you are, the worse your exam grades will be.
+            Well, is that true? We don’t know! <br>Let’s find out together.
+          </p>
+          <p style="font-size: 0.5em; line-height: 1.6em; margin-bottom: 40px;">
+            We have exam stress data and the corresponding exam score data of 10 students.<br>
+            Which one of them is the most similar to you based on your stress levels? How well would you do?
+          </p>
+
+          <br>
+          <button onclick="Reveal.next()" style="
+            background: #1e88e5;
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;">next</button>
+        </div>
+      </section>
 
       <!-- Slide 1: Exam Type -->
       <section>
-        <h2>Select Exam Type</h2>
-        <label for="examType">Exam Type:</label>
-        <select id="examType">
-          <option value="midterm1">Midterm 1</option>
-          <option value="midterm2">Midterm 2</option>
-          <option value="final">Final</option>
-        </select>
-        <br><br>
-        <button onclick="Reveal.next()">Next</button>
+        <div style="text-align: center;">
+          <p style="font-size: 1.1em; font-weight: 800;">What type of exam do you wanna take?</p>
+          
+          <div id="examButtons" style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <button class="exam-choice" data-value="midterm1">Midterm 1</button>
+            <button class="exam-choice" data-value="midterm2">Midterm 2</button>
+            <button class="exam-choice" data-value="final">Final</button>
+          </div>
+
+          <br><br>
+          <!-- <button onclick="Reveal.next()" style="
+            margin-top: 80px;
+            background: linear-gradient(to right, #1e88e5, #42a5f5);
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;">next</button> -->
+        </div>
       </section>
 
       <!-- Slide 2: Heart Rate
@@ -38,31 +98,87 @@
 
       <!-- Slide 3: Temperature -->
       <section>
-        <h2>Select Avg Heart Rate</h2>
-        <label for="avgHR">Average HR:</label>
+        <p style="font-size: 1.1em; font-weight: 800;">How Nervous Do You Think You Will Be?</p>
+        <p style="margin-top: 10px; font-size: 0.5em; color: #444; opacity: 60%;">
+          Lower heart rates indicate lower stress levels, while higher heart rates indicate higher stress levels.<br>
+          The average heart rate of a healthy adult is around 90 beats per minute (bpm).<br>
+          Adjust the slider to set your average heart rate for the exam.
+        </p>
+        <label for="avgHR" style="font-size: 0.7em;">Average Heart Rate:</label>
         <input type="range" id="avgHR" min="60" max="140" value="90" oninput="hrValue.textContent = this.value">
-        <span id="hrValue">90</span>
+        <span id="hrValue" style="font-size: 0.7em;">90</span>
         <br><br>
-        <h2>Select Avg Temperature</h2>
-        <label for="avgTemp">Average Temp (°C):</label>
+        <p style="margin-top: 10px; font-size: 0.5em; color: #444; opacity: 60%;">
+          The average body temperature of a healthy adult is around 37°C.<br>
+          Adjust the slider to set your average body temperature for the exam.
+        </p>
+        <label for="avgTemp" style="font-size: 0.7em;">Average Temperature (°C):</label>
         <input type="range" id="avgTemp" min="19" max="36" step="0.1" value="23" oninput="tempValue.textContent = this.value">
-        <span id="tempValue">23</span>
+        <span id="tempValue" style="font-size: 0.7em;">23</span>
         <br><br>
-        <button onclick="Reveal.prev()">Back</button>
-        <button onclick="Reveal.next()">Next</button>
+        <button onclick="Reveal.prev()" style="
+            background: #1e88e5;
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;">back</button>
+        <button onclick="Reveal.next(); loadAndPlot();" style="
+            background: #1e88e5;
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;">next</button>
       </section>
 
       <!-- Slide 4: Charts -->
       <section>
-        <h2>Closest Student & Chart</h2>
-        <button onclick="loadAndPlot()">Find Closest Student & Plot</button>
+        <div style="height: 100%;">
+          <h3 id="selectedStudentTitle"></h3>
+          <img src = "images/student.webp" alt="Student Image" style="width: 400px; height: auto; border-radius: 10px; margin-bottom: 20px;">
+          <br>
+          <p style="font-size: 0.5em; color: #444; opacity: 60%;">
+            The charts below show the heart rate and temperature data of the student you selected.<br>
+            The heart rate chart shows the heart rate data over time, while the temperature chart shows the temperature data over time.<br>
+            The black dotted line indicates the class' average heart rate and temperature for the exam.<br>
+          <p style="font-size: 0.5em; color: black;"> Scroll down to see how nervous this student was in the exam!</p>
+        </div>
+        <br>
+        <div id="charts">
+          <svg id="hrChart" width="1000" height="500"></svg>
+        </div>
         <div id="charts">
           <h3 id="selectedStudentTitle"></h3>
-          <svg id="hrChart" width="800" height="300"></svg>
-          <svg id="tempChart" width="800" height="300"></svg>
+          <svg id="tempChart" width="1000" height="500"></svg>
         </div>
         <br><br>
-        <button onclick="Reveal.prev()">Back</button>
+        <button onclick="Reveal.prev()" style="
+            background: #1e88e5;
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;">back</button>
+        <button onclick="Reveal.next()" style="
+            background: #1e88e5;
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;">next</button>
       </section>
 
     </div>
@@ -70,7 +186,13 @@
 
   <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
   <script>
-    Reveal.initialize();
+    Reveal.initialize({
+      width: "100%",
+      height: "100%",
+      margin: 0.04,
+      minScale: 0.2,
+      maxScale: 1.5
+    });
   </script>
 </body>
 </html>
