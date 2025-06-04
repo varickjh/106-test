@@ -207,8 +207,8 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
 
     gHR.on("mouseout", () => {
       tooltip.style("display", "none");
-      tooltipDotHR.style("display", "none");
-      tooltipDotTemp.style("display", "none");
+      Object.values(tooltipDotsHR).forEach(dot => dot.style("display", "none"));
+      Object.values(tooltipDotsTemp).forEach(dot => dot.style("display", "none"));
       hoverLineHR.style("display", "none");
       hoverLineTemp.style("display", "none");
     });

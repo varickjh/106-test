@@ -44,7 +44,7 @@ function loadAndPlot() {
 
         // Get exam score
         const studentRow = grades.find(d => d.Student === closest);
-        console.log(studentRow)
+        // console.log(studentRow)
         const examLabel = {
         midterm1: "Midterm 1 Score",
         midterm2: "Midterm 2 Score",
@@ -78,7 +78,67 @@ function loadAndPlot() {
 
         // Existing call — now pass meanData as last argument
         drawHRLineChart(studentData, "Time", "Heart Rate", "#hrChart", "Heart Rate (bpm)", average_hr, studentColor);
+        // append to mean-takeaway-hr and nervous-takeaway-hr
+        // Check if >50% of student's HR is below class mean at each time point
+        let belowCount = 0;
+        const finalTakeaway = document.getElementById("final-takeaway");
+        for (let i = 0; i < studentData.length && i < average_hr.length; i++) {
+          if (studentData[i]["Heart Rate"] < average_hr[i]["Heart Rate"]) belowCount++;
+        }
+        const takeaway = document.getElementById("mean-takeaway-hr");
+        if (studentData.length > 0 && belowCount / studentData.length >= 0.5) {
+          if (takeaway) {
+            takeaway.textContent = `On average, ${closest}'s heart rate was lower than the rest of the class in this exam.`;
+            // add a <br>
+            takeaway.appendChild(document.createElement("br"));
+            finalTakeaway.textContent = `These results indicates lower stress levels or nervousness during the exam, which may explain ${closest}'s better exam performance with his score of ${score}.`;
+          }
+        } else {
+          if (takeaway) {
+            takeaway.textContent = `On average, ${closest}'s heart rate was above the class average for more than half of the exam.`;
+            // add a <br>
+            takeaway.appendChild(document.createElement("br"));
+            finalTakeaway.textContent = `These results indicates higher stress levels or nervousness during the exam, which may explain ${closest}'s worse exam performance with his score of ${score}.`;
+          }
+        }
+        // Check if student's HR cycle is constant or spiking
+        const hrValues = studentData.map(d => d["Heart Rate"]);
+        const meanHR = hrValues.reduce((sum, v) => sum + v, 0) / hrValues.length;
+        const stdHR = Math.sqrt(hrValues.reduce((sum, v) => sum + Math.pow(v - meanHR, 2), 0) / hrValues.length);
+
+        const hrPatternTakeaway = document.getElementById("nervous-takeaway-hr");
+        if (hrPatternTakeaway) {
+          if (stdHR < 5) {
+            hrPatternTakeaway.textContent = `This student's heart rate also was very steady throughout the exam.`;
+          } else if (stdHR < 12) {
+            hrPatternTakeaway.textContent = `This student's heart rate also showed moderate variation during the exam.`;
+          } else {
+            hrPatternTakeaway.textContent = `This student's heart rate also spiked frequently during the exam.`;
+          }
+        }
+
         drawTempLineChart(studentData, "Time", "Temperature", "#tempChart", "Temperature (°C)", average_temp, studentColor);
+        // append to mean-takeaway-temp
+        belowCount = 0;
+        for (let i = 0; i < studentData.length && i < average_temp.length; i++) {
+            if (studentData[i]["Temperature"] < average_temp[i]["Temperature"]) belowCount++;
+        }
+        const tempTakeaway = document.getElementById("mean-takeaway-temp");
+        if (studentData.length > 0 && belowCount / studentData.length >= 0.5) {
+          if (tempTakeaway) {
+            tempTakeaway.textContent = `On average, ${closest}'s temperature was lower than the rest of the class in this exam.`;
+            // add a <br>
+            tempTakeaway.appendChild(document.createElement("br"));
+          }
+        } else {
+          if (takeaway) {
+            tempTakeaway.textContent = `On average, ${closest}'s temperature was above the class average for more than half of the exam.`;
+            // add a <br>
+            tempTakeaway.appendChild(document.createElement("br"));
+          }
+        }
+        
+
 
 
 //        drawHRLineChart(studentData, "Time", "Heart Rate", "#hrChart", "Heart Rate (bpm)");

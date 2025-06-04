@@ -3,9 +3,12 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
+
 
 .exam-choice {
   background-color: #3f6fe2;
@@ -47,12 +50,6 @@
 .exam-select.selected {
   background-color: #1e88e5;
   box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.4);
-}
-
-.reveal .slides section {
-  overflow-y: auto !important;
-  max-height: 90vh;
-  padding: 20px;
 }
 
 #charts svg {

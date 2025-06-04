@@ -19,7 +19,7 @@
     <div class="slides">
       <!-- Main Title Slide -->
       <section data-auto-animate>
-        <h1 style="font-size: 2em; font-weight: 800; color: #0d47a1;">THE PRESSURE PARADOX</h1>
+        <h1 style="font-size: 2em; font-weight: 800; color: #0d47a1; margin-top: 10%;">THE PRESSURE PARADOX</h1>
         <p style="font-size: 1em; font-weight: 600; margin-top: -10px;">Does Stress Fuel or Fracture Exam Performance?</p>
 
         <button onclick="Reveal.next()" style="
@@ -41,7 +41,7 @@
 
       <!-- Slide 0: Introduction -->
       <section>
-        <div style="text-align: center; max-width: 900px; margin: auto;">
+        <div style="text-align: center; max-width: 900px; margin: auto; margin-top: 10%;">
           <p style="font-size: 0.7em; line-height: 1.6em; margin-bottom: 20px;">
             It is a common notion that the more stressed you are, the worse your exam grades will be.
             Well, is that true? We don’t know! <br>Let’s find out together.
@@ -68,7 +68,7 @@
       <!-- Slide 1: Exam Type -->
       <section>
         <div style="text-align: center;">
-          <p style="font-size: 1.1em; font-weight: 800;">What type of exam do you wanna take?</p>
+          <p style="font-size: 1.1em; font-weight: 800; margin-top: 10%;">What type of exam do you wanna take?</p>
           
           <div id="examButtons" style="margin-top: 40px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
             <button class="exam-choice" data-value="midterm1">Midterm 1</button>
@@ -99,7 +99,7 @@
 
       <!-- Slide 3: Temperature -->
       <section>
-        <p style="font-size: 1.1em; font-weight: 800;">How Nervous Do You Think You Will Be?</p>
+        <p style="font-size: 1.1em; font-weight: 800; margin-top: 10%;">How Nervous Do You Think You Will Be?</p>
         <p style="margin-top: 10px; font-size: 0.5em; color: #444; opacity: 60%;">
           Lower heart rates indicate lower stress levels, while higher heart rates indicate higher stress levels.<br>
           The average heart rate of a healthy adult is around 90 beats per minute (bpm).<br>
@@ -140,6 +140,9 @@
       </section>
 
       <!-- Slide 4: Charts -->
+      <script>
+        // to-do: Scroll to top when this slide is shown
+      </script>
       <section>
         <div style="height: 100%;">
           <p style="font-size: 1.1em; font-weight: 800;" id="selectedStudentTitle"></p>
@@ -148,7 +151,7 @@
           <p style="font-size: 0.5em; color: #444; opacity: 60%;">
             Based on our calculations, this is the student who was the most similar to your average temperature and average heart rate.<br>
             <br>
-            The charts below show the heart rate and temperature data of this.<br>
+            The charts below show the heart rate and temperature data of this student.<br>
             The heart rate chart shows the heart rate data over time, while the temperature chart shows the temperature data over time.<br>
             The black dotted line indicates the class' average heart rate and temperature for the exam.<br>
           <p style="font-size: 0.5em; color: black;"> Scroll down to see how nervous this student was in the exam!</p>
@@ -157,48 +160,54 @@
         <div id="charts">
           <svg id="hrChart" width="1000" height="300"></svg>
         </div>
+        <div style="font-size: 0.5em; line-height: 1.6em; margin-top: 20px;" id="mean-takeaway-hr"></div>
+        <div style="font-size: 0.5em; line-height: 1.6em; margin-top: 20px;"id="nervous-takeaway-hr"></div>
         <div id="charts">
           <svg id="tempChart" width="1000" height="300"></svg>
         </div>
-        <br><br>
+        <div style="font-size: 0.5em; line-height: 1.6em; margin-top: 20px;"id="mean-takeaway-temp"></div>
+        <div style="font-size: 0.5em; line-height: 1.6em; margin-top: 20px;"id="final-takeaway"></div>
+        <br>
         <button onclick="Reveal.prev()" style="
-            background: #1e88e5;
-            color: white;
-            padding: 12px 28px;
-            font-size: 0.6em;
-            font-weight: bold;
+            color: rgb(92, 92, 92);
+            background-color: white;
+            font-size: 0.5em;
+            font-weight: 100;            
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease;">back</button>
+            transition: background 0.3s ease;">Try Again</button>
         <button onclick="Reveal.next()" style="
             background: #1e88e5;
             color: white;
             padding: 12px 28px;
-            font-size: 0.6em;
+            font-size: 0.5em;
             font-weight: bold;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease;">next</button>
+            transition: background 0.3s ease;">Find Out More!</button>
       </section>
       <!-- Slide 5: Takeaways -->
       <section>
-        <p style="font-size: 1.5em; font-weight: 800; text-align: center;">So, what have we learned?</p>
+        <p style="font-size: 1.5em; font-weight: 800; text-align: center; margin-top: 10%;">So, what have we learned?</p>
         <p style="font-size: 0.5em; line-height: 1.6em; margin-top: 20px;">
           Based on the data, we can see that stress levels vary among students during exams.<br>
           Some students perform better under pressure, while others struggle.<br>
           <br>
-          In general, students tend to spike in heart rate and temperature towards the end of every exam. Whether it is a midterm or a final,
+          In general, <b>students tend to spike in heart rate and temperature towards the end of every exam</b>. <br>Whether it is a midterm or a final,
           the experience of writing at the speed of light to answer all remaining questions is a familiar experience for any student!<br>
           <br>
-          The data also shows that students with lower heart rates and temperatures do not necessarily to perform better on exams. What's important to note
-          is that students who stay calmer (constant cycles of heart rate and temperature) tend to do better than students who panic (spiking heart rate and temperature levels).<br>
+          The data also shows that <b>students with lower heart rates and temperatures do not necessarily to perform better on exams</b>, and vice versa. <br>What's important to note
+          is that <b>students who stay calmer </b>(constant cycles of heart rate and temperature) tend to <b>do better</b> than <b>students who panic</b> (spiking heart rate and temperature levels).<br>
           <br>
-          Remember, it is important to stay calm, but it is always the most important to study for your exam! No amount of heart rate or temperature will save you if you do not know the material!<br>
+          Remember, it is important to stay calm, but it is always the most important to <b>study for your exam</b>! No amount of unnervousness will save you if you do not know the material!<br>
           <br>
         </p>
-  
+        
+        <p style="font-size: 0.4em; opacity: 60%;">
+          Still curious about how nervous other students were and how they performed?<br>
+        </p>
         <button onclick="Reveal.next()" style="
             background: #1e88e5;
             color: white;
@@ -208,7 +217,7 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease;">Click Here to Explore All Students!</button>
+            transition: background 0.3s ease;">Take Me There</button>
       </section>
       <!-- Slide 6: Charts of All Students -->
       <section>
@@ -221,15 +230,16 @@
             <button class="exam-select" data-value="final">Final</button>
         </div>
         <div style="display: flex; align-items: center;">
-          <div style="display: flex; flex-direction: column; align-items: center; padding-left: 15%;">
+          <div style="display: flex; flex-direction: column; align-items: center; margin-left: 25%; margin-top: 20px;">
             <div>
               <svg id="all-hr-chart" width="1000" height="400"></svg>
             </div>
             <div>
-              <svg id="all-temp-chart" width="1000" height="400""></svg>
+              <svg id="all-temp-chart" width="1000" height="400"></svg>
             </div>
           </div>
           <div id="legend" style="min-width: 120px;"></div>
+        </div>
         </div>
 
         <script>
