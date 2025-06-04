@@ -1,4 +1,5 @@
 const studentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
+// change 
 let exam = null;
 document.querySelectorAll(".exam-choice").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -53,7 +54,7 @@ function loadAndPlot() {
 
         // Display selected student and score
         document.getElementById("selectedStudentTitle").textContent =
-        `Closest Student: ${closest} | ${examLabel[exam]}: ${score}`;
+        `This is Student ${closest}, his ${examLabel[exam]} was ${score}.`;
 
         const studentColor = studentColorScale(closest);
 

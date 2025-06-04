@@ -28,6 +28,27 @@
   box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.4);
 }
 
+.exam-select {
+  background-color: #3f6fe2;
+  color: white;
+  padding: 12px 24px;
+  font-size: 0.3em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.exam-select:hover {
+  background-color: #2e5dd1;
+}
+
+.exam-select.selected {
+  background-color: #1e88e5;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.4);
+}
+
 .reveal .slides section {
   overflow-y: auto !important;
   max-height: 90vh;
@@ -49,3 +70,34 @@
     width: 100%;
     /* top: -10px; */
 }
+
+#legend {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.legend-item.selected {
+  font-weight: bold;
+  background-color: #f0f8ff;
+  border-radius: 5px;
+  padding: 3px 6px;
+}
+
+.legend-item span:first-child {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+
+

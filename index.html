@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="main.js" defer></script>
+  <script src="examCharts.js"></script>
   <style>
     input[type="range"] { width: 60%; }
     #charts svg { margin-top: 10px; }
@@ -141,22 +142,23 @@
       <!-- Slide 4: Charts -->
       <section>
         <div style="height: 100%;">
-          <h3 id="selectedStudentTitle"></h3>
+          <p style="font-size: 1.1em; font-weight: 800;" id="selectedStudentTitle"></p>
           <img src = "images/student.webp" alt="Student Image" style="width: 400px; height: auto; border-radius: 10px; margin-bottom: 20px;">
           <br>
           <p style="font-size: 0.5em; color: #444; opacity: 60%;">
-            The charts below show the heart rate and temperature data of the student you selected.<br>
+            Based on our calculations, this is the student who was the most similar to your average temperature and average heart rate.<br>
+            <br>
+            The charts below show the heart rate and temperature data of this.<br>
             The heart rate chart shows the heart rate data over time, while the temperature chart shows the temperature data over time.<br>
             The black dotted line indicates the class' average heart rate and temperature for the exam.<br>
           <p style="font-size: 0.5em; color: black;"> Scroll down to see how nervous this student was in the exam!</p>
         </div>
         <br>
         <div id="charts">
-          <svg id="hrChart" width="1000" height="500"></svg>
+          <svg id="hrChart" width="1000" height="300"></svg>
         </div>
         <div id="charts">
-          <h3 id="selectedStudentTitle"></h3>
-          <svg id="tempChart" width="1000" height="500"></svg>
+          <svg id="tempChart" width="1000" height="300"></svg>
         </div>
         <br><br>
         <button onclick="Reveal.prev()" style="
@@ -180,7 +182,84 @@
             cursor: pointer;
             transition: background 0.3s ease;">next</button>
       </section>
+      <!-- Slide 5: Takeaways -->
+      <section>
+        <p style="font-size: 1.5em; font-weight: 800; text-align: center;">So, what have we learned?</p>
+        <p style="font-size: 0.5em; line-height: 1.6em; margin-top: 20px;">
+          Based on the data, we can see that stress levels vary among students during exams.<br>
+          Some students perform better under pressure, while others struggle.<br>
+          <br>
+          In general, students tend to spike in heart rate and temperature towards the end of every exam. Whether it is a midterm or a final,
+          the experience of writing at the speed of light to answer all remaining questions is a familiar experience for any student!<br>
+          <br>
+          The data also shows that students with lower heart rates and temperatures do not necessarily to perform better on exams. What's important to note
+          is that students who stay calmer (constant cycles of heart rate and temperature) tend to do better than students who panic (spiking heart rate and temperature levels).<br>
+          <br>
+          Remember, it is important to stay calm, but it is always the most important to study for your exam! No amount of heart rate or temperature will save you if you do not know the material!<br>
+          <br>
+        </p>
+  
+        <button onclick="Reveal.next()" style="
+            background: #1e88e5;
+            color: white;
+            padding: 12px 28px;
+            font-size: 0.6em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;">Click Here to Explore All Students!</button>
+      </section>
+      <!-- Slide 6: Charts of All Students -->
+      <section>
+        <p style="font-size: 0.5em; color: #444; opacity: 50;">
+          The charts below show the heart rate and temperature data of all students during the exam.<br></p>
+        <p style="font-size: 0.5em; color: black; font-weight: bold;">Select the exam you want to see:</p>
+        <div id="examButtons" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <button class="exam-select" data-value="midterm1">Midterm 1</button>
+            <button class="exam-select" data-value="midterm2">Midterm 2</button>
+            <button class="exam-select" data-value="final">Final</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div style="display: flex; flex-direction: column; align-items: center; padding-left: 15%;">
+            <div>
+              <svg id="all-hr-chart" width="1000" height="400"></svg>
+            </div>
+            <div>
+              <svg id="all-temp-chart" width="1000" height="400""></svg>
+            </div>
+          </div>
+          <div id="legend" style="min-width: 120px;"></div>
+        </div>
 
+        <script>
+          let studentScores = {};
+          let currentExam = "midterm1"; // Default exam
+
+          d3.csv("data/Student_Grades.csv").then(scores => {
+            scores.forEach(row => {
+              const id = row.Student;
+              studentScores[id] = {
+                midterm1: row["Midterm 1 Score"],
+                midterm2: row["Midterm 2 Score"],
+                final: row["Final Score"]
+              };
+            });
+
+            // Now call initial rendering after scores are loaded
+            renderExamCharts("#all-hr-chart", "#all-temp-chart", "#legend", currentExam);
+          });
+
+          document.querySelectorAll('.exam-select').forEach(button => {
+            button.addEventListener('click', () => {
+              document.querySelectorAll('.exam-select').forEach(btn => btn.classList.remove('selected'));
+              button.classList.add('selected');
+              currentExam = button.dataset.value;
+              renderExamCharts("#all-hr-chart", "#all-temp-chart", "#legend", currentExam);
+            });
+          });
+        </script>
+      </section>
     </div>
   </div>
 
