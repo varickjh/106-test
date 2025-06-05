@@ -1,23 +1,34 @@
 const studentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
+const tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "tooltip")
+  .style("position", "absolute")
+  .style("padding", "6px 10px")
+  .style("background", "#fff")
+  .style("border", "1px solid #ccc")
+  .style("border-radius", "4px")
+  .style("pointer-events", "none")
+  .style("font-size", "12px")
+  .style("box-shadow", "0 2px 6px rgba(0,0,0,0.1)")
+  .style("display", "none");
+
 // change 
-let exam = null;
+let exam = 'midterm1'; // or any default exam type
 document.querySelectorAll(".exam-choice").forEach(btn => {
-      btn.addEventListener("click", () => {
-        // Remove existing selection styling
-        document.querySelectorAll(".exam-choice").forEach(b => b.classList.remove("selected"));
-        
-        // Mark new selection
-        btn.classList.add("selected");
-        exam = btn.getAttribute("data-value");
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".exam-choice").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    exam = btn.getAttribute("data-value");
 
-        // Store value if syncing with hidden input
-        const hiddenSelect = document.getElementById("examType");
-        if (hiddenSelect) hiddenSelect.value = exam;
+    const hiddenSelect = document.getElementById("examType");
+    if (hiddenSelect) hiddenSelect.value = exam;
 
-        // Wait a moment for visual feedback, then move to next slide
-        setTimeout(() => Reveal.next(), 500); // optional delay for smoothness
-      });
-    });
+    loadAndPlot();  // 🟢 this is what triggers chart rendering
+
+    setTimeout(() => Reveal.next(), 500);
+  });
+});
+
 
 function loadAndPlot() {
     const inputHR = parseFloat(document.getElementById("avgHR").value);
@@ -150,6 +161,12 @@ function loadAndPlot() {
           height = +svg.attr("height") - margin.top - margin.bottom;
   
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const overlay = g.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "none")
+      .attr("pointer-events", "all");
   
     const x = d3.scaleTime()
                 .domain(d3.extent(data, d => d[xKey]))
@@ -195,7 +212,42 @@ function loadAndPlot() {
      .attr("cy", d => y(d[yKey]))
      .attr("r", 3)
      .attr("fill", studentColor);
-  
+
+     const focusDot = g.append("circle")
+      .attr("r", 5)
+      .attr("stroke", studentColor)
+      .attr("fill", "white")
+      .attr("stroke-width", 2)
+      .style("display", "none");
+
+    overlay.on("mousemove", function(event) {
+      const [mouseX] = d3.pointer(event);
+      const x0 = x.invert(mouseX);
+
+      const bisect = d3.bisector(d => d[xKey]).left;
+      const i = bisect(data, x0, 1);
+      const d0 = data[i - 1];
+      const d1 = data[i];
+      const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
+
+      focusDot
+        .attr("cx", x(d[xKey]))
+        .attr("cy", y(d[yKey]))
+        .style("display", "block");
+
+      tooltip
+        .style("left", (event.pageX + 12) + "px")
+        .style("top", (event.pageY - 40) + "px")
+        .style("display", "block")
+        .html(`<b>Time:</b> ${d3.timeFormat("%H:%M")(d[xKey])}<br>
+               <b>${yLabel}:</b> ${d[yKey].toFixed(1)}`);
+    });
+
+overlay.on("mouseout", function() {
+  tooltip.style("display", "none");
+  focusDot.style("display", "none");
+});
+
     g.append("text")
      .attr("x", -margin.left + 10)
      .attr("y", -5)
@@ -250,7 +302,13 @@ function loadAndPlot() {
           height = +svg.attr("height") - margin.top - margin.bottom;
   
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-  
+
+    const overlay = g.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "none")
+      .attr("pointer-events", "all");
+
     const x = d3.scaleTime()
                 .domain(d3.extent(data, d => d[xKey]))
                 .range([0, width]);
@@ -295,6 +353,41 @@ function loadAndPlot() {
      .attr("cy", d => y(d[yKey]))
      .attr("r", 3)
      .attr("fill", studentColor);
+
+     const focusDot = g.append("circle")
+      .attr("r", 5)
+      .attr("stroke", studentColor)
+      .attr("fill", "white")
+      .attr("stroke-width", 2)
+      .style("display", "none");
+
+      overlay.on("mousemove", function(event) {
+        const [mouseX] = d3.pointer(event);
+        const x0 = x.invert(mouseX);
+
+        const bisect = d3.bisector(d => d[xKey]).left;
+        const i = bisect(data, x0, 1);
+        const d0 = data[i - 1];
+        const d1 = data[i];
+        const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
+
+        focusDot
+          .attr("cx", x(d[xKey]))
+          .attr("cy", y(d[yKey]))
+          .style("display", "block");
+
+        tooltip
+          .style("left", (event.pageX + 12) + "px")
+          .style("top", (event.pageY - 40) + "px")
+          .style("display", "block")
+          .html(`<b>Time:</b> ${d3.timeFormat("%H:%M")(d[xKey])}<br>
+                 <b>${yLabel}:</b> ${d[yKey].toFixed(1)}`);
+      });
+
+      overlay.on("mouseout", function() {
+        tooltip.style("display", "none");
+        focusDot.style("display", "none");
+      });
   
     g.append("text")
      .attr("x", -margin.left + 10)

@@ -103,13 +103,25 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
 
     // Parse mean data (important!)
     average_hr.forEach(d => {
-      d.Time = d3.timeParse("%H:%M:%S")(d.Time);
+      d.Time = parseTime(d.Time);
       d["Heart Rate"] = +d["Heart Rate"];
     });
     average_temp.forEach(d => {
-      d.Time = d3.timeParse("%H:%M:%S")(d.Time);
+      d.Time = parseTime(d.Time);
       d.Temperature = +d.Temperature;
     });
+
+    // Tooltip dots for class average
+    const meanDotHR = gHR.append("circle")
+      .attr("r", 5)
+      .attr("fill", "black")
+      .style("display", "none");
+
+    const meanDotTemp = gTemp.append("circle")
+      .attr("r", 5)
+      .attr("fill", "black")
+      .style("display", "none");
+
 
     gHR.append("path")
       .datum(average_hr)
@@ -244,6 +256,31 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
                 Score: ${score}<br><br>`;
       });
 
+      if (clickedStudents.size === 0 || clickedStudents.has('average')) {
+        const closestMeanHR = average_hr.reduce((a, b) =>
+          Math.abs(b.Time - time) < Math.abs(a.Time - time) ? b : a);
+        const closestMeanTemp = average_temp.reduce((a, b) =>
+          Math.abs(b.Time - time) < Math.abs(a.Time - time) ? b : a);
+
+        const xVal = x(closestMeanHR.Time);
+        const yValHR = yHR(closestMeanHR["Heart Rate"]);
+        const yValTemp = yTemp(closestMeanTemp["Temperature"]);
+
+        meanDotHR
+          .attr("cx", xVal)
+          .attr("cy", yValHR)
+          .style("display", "block");
+
+        meanDotTemp
+          .attr("cx", xVal)
+          .attr("cy", yValTemp)
+          .style("display", "block");
+
+        html += `<b style="color:black">Class Average</b><br>
+                  Heart Rate: ${Math.round(closestMeanHR["Heart Rate"])} bpm<br>
+                  Temperature: ${closestMeanTemp["Temperature"].toFixed(1)} °C<br><br>`;
+      }
+
       tooltip
         .style("display", "block")
         .style("left", (event.pageX + 12) + "px")
@@ -253,6 +290,8 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
 
 
     gHR.on("mouseout", () => {
+      meanDotHR.style("display", "none");
+      meanDotTemp.style("display", "none");
       tooltip.style("display", "none");
       Object.values(tooltipDotsHR).forEach(dot => dot.style("display", "none"));
       Object.values(tooltipDotsTemp).forEach(dot => dot.style("display", "none"));
