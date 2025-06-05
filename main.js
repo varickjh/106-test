@@ -138,11 +138,6 @@ function loadAndPlot() {
           }
         }
         
-
-
-
-//        drawHRLineChart(studentData, "Time", "Heart Rate", "#hrChart", "Heart Rate (bpm)");
-//        drawTempLineChart(studentData, "Time", "Temperature", "#tempChart", "Temperature (°C)");
     });
   }
   
@@ -204,9 +199,15 @@ function loadAndPlot() {
     g.append("text")
      .attr("x", -margin.left + 10)
      .attr("y", -5)
-    //  .attr("font-weight", "bold")
      .attr("font-size", "14px")
      .text(yLabel);
+    
+    g.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "14px")
+      .text("Time");
 
     // Add legend
     const legend = g.append("g")
@@ -238,7 +239,6 @@ function loadAndPlot() {
       .attr("y", 25)
       .text("Exam Mean")
       .style("font-size", "12px");
-
   }
 
   function drawTempLineChart(data, xKey, yKey, svgSelector, yLabel, meanData, studentColor) {
@@ -302,6 +302,13 @@ function loadAndPlot() {
     //  .attr("font-weight", "bold")
      .attr("font-size", "14px")
      .text(yLabel);
+
+    g.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "14px")
+      .text("Time");
 
     // Add legend
     const legend = g.append("g")

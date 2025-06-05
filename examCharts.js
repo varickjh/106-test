@@ -13,6 +13,7 @@ const tooltip = d3.select("body").append("div")
 
 
 function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam = 'midterm1') {
+  // 
   const margin = { top: 20, right: 30, bottom: 30, left: 60 };
   const svgWidth = 800, svgHeight = 300;
   const width = svgWidth - margin.left - margin.right;
@@ -33,7 +34,7 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
   .style("fill", "none")
   .style("pointer-events", "all");
 
-  const color = d3.scaleOrdinal(d3.schemeCategory10);
+  const color = d3.scaleOrdinal(d3.schemeObservable10);
   let studentSet = new Set(['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10']);
 
   function parseTime(d) {
@@ -41,7 +42,11 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
     return new Date(2023, 0, 1, h, m, s || 0);
   }
 
-  d3.csv(`data/${exam}_combined.csv`).then(data => {
+  Promise.all([
+        d3.csv(`data/${exam}_combined.csv`),
+        d3.csv(`data/mean_${exam}_hr.csv`),
+        d3.csv(`data/mean_${exam}_temp.csv`)
+    ]).then(([data, average_hr, average_temp]) => {
     data.forEach(d => {
       d.HeartRate = +d['Heart Rate'];
       d.Temperature = +d.Temperature;
@@ -85,10 +90,52 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
     gTemp.append("g").call(d3.axisLeft(yTemp));
 
     // Labels
-    gHR.append("text").attr("x", -margin.left + 10).attr("y", -5)
+    gHR.append("text").attr("x", -margin.left + 10).attr("y", -10)
       .attr("font-size", "14px").text("Heart Rate (bpm)");
-    gTemp.append("text").attr("x", -margin.left + 10).attr("y", -5)
+    gTemp.append("text").attr("x", -margin.left + 10).attr("y", -10)
       .attr("font-size", "14px").text("Temperature (°C)");
+    gHR.append("text").attr("x", width / 2).attr("y", height + margin.bottom)
+      .attr("text-anchor", "middle").attr("font-size", "14px")
+      .text("Time");
+    gTemp.append("text").attr("x", width / 2).attr("y", height + margin.bottom)
+      .attr("text-anchor", "middle").attr("font-size", "14px")
+      .text("Time");
+
+    // Parse mean data (important!)
+    average_hr.forEach(d => {
+      d.Time = d3.timeParse("%H:%M:%S")(d.Time);
+      d["Heart Rate"] = +d["Heart Rate"];
+    });
+    average_temp.forEach(d => {
+      d.Time = d3.timeParse("%H:%M:%S")(d.Time);
+      d.Temperature = +d.Temperature;
+    });
+
+    gHR.append("path")
+      .datum(average_hr)
+      .attr("fill", "none")
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", "5,5")
+      .attr("d", d3.line()
+        .x(d => x(d.Time))
+        .y(d => yHR(d["Heart Rate"]))
+      )
+      .attr("class", `line-hr-mean`);
+;
+    
+    gTemp.append("path")
+      .datum(average_temp)
+      .attr("fill", "none")
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+      .attr("d", d3.line()
+        .x(d => x(d.Time))
+        .y(d => yTemp(d.Temperature))
+      )
+      .attr("class", `line-temp-mean`);
+
+
 
     // Tooltip setup
     const yScaleHR = yHR;
@@ -213,76 +260,6 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
       hoverLineTemp.style("display", "none");
     });
 
-    // gTemp.on("mousemove", function (event) {
-    //   const [mouseX] = d3.pointer(event);
-    //   const time = x.invert(mouseX);
-
-    //   const selected = [...clickedStudents];
-    //   if (selected.length === 0) {
-    //     tooltip.style("display", "none");
-    //     Object.values(tooltipDotsHR).forEach(dot => dot.style("display", "none"));
-    //     Object.values(tooltipDotsTemp).forEach(dot => dot.style("display", "none"));
-    //     hoverLineHR.style("display", "none");
-    //     hoverLineTemp.style("display", "none");
-    //     return;
-    //   }
-
-    //   // Show vertical lines
-    //   const xPos = x(time);
-    //   hoverLineHR.attr("x1", xPos).attr("x2", xPos).style("display", "block");
-    //   hoverLineTemp.attr("x1", xPos).attr("x2", xPos).style("display", "block");
-
-    //   // Generate tooltip HTML
-    //   let html = "";
-
-    //   selected.forEach(student => {
-    //     const series = grouped.get(student);
-    //     if (!series) return;
-
-    //     const closest = series.reduce((a, b) =>
-    //       Math.abs(b.Time - time) < Math.abs(a.Time - time) ? b : a);
-
-    //     const xVal = x(closest.Time);
-    //     const yHRVal = yHR(closest.HeartRate);
-    //     const yTempVal = yTemp(closest.Temperature);
-    //     const studentColor = color(student);
-    //     const score = studentScores[student]?.[exam] ?? "N/A";
-
-    //     tooltipDotsHR[student]
-    //       .attr("cx", xVal)
-    //       .attr("cy", yHRVal)
-    //       .attr("stroke", studentColor)
-    //       .style("display", "block");
-
-    //     tooltipDotsTemp[student]
-    //       .attr("cx", xVal)
-    //       .attr("cy", yTempVal)
-    //       .attr("stroke", studentColor)
-    //       .style("display", "block");
-
-    //     html += `<b style="color:${studentColor}">${student}</b><br>
-    //             Heart Rate: ${Math.round(closest.HeartRate)} bpm<br>
-    //             Temperature: ${closest.Temperature.toFixed(1)} °C<br>
-    //             Score: ${score}<br><br>`;
-    //   });
-
-    //   tooltip
-    //     .style("display", "block")
-    //     .style("left", (event.pageX + 12) + "px")
-    //     .style("top", (event.pageY - 40) + "px")
-    //     .html(html);
-    // });
-
-
-    // gTemp.on("mouseout", () => {
-    //   tooltip.style("display", "none");
-    //   tooltipDotHR.style("display", "none");
-    //   tooltipDotTemp.style("display", "none");
-    //   hoverLineHR.style("display", "none");
-    //   hoverLineTemp.style("display", "none");
-    // });
-
-
     const studentsSorted = students.slice().sort((a, b) => +a.slice(1) - +b.slice(1));
 
     const scoreLabelFor = s => {
@@ -298,6 +275,10 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
         svgHR.selectAll(`.line-hr-${s}`).attr("opacity", isActive ? 1 : 0.1);
         svgTemp.selectAll(`.line-temp-${s}`).attr("opacity", isActive ? 1 : 0.1);
       });
+
+      const isAverageActive = clickedStudents.size === 0 || clickedStudents.has('average');
+      svgHR.selectAll(`.line-hr-mean`).attr("opacity", isAverageActive ? 1 : 0.1);
+      svgTemp.selectAll(`.line-temp-mean`).attr("opacity", isAverageActive ? 1 : 0.1);
     }
     // Legend
     const legend = d3.select(legendContainer).html("");
@@ -335,5 +316,38 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
           updateLineVisibility();
         });
     });
+
+    // Add average lines to legend
+    const averageItem = legend.append("div").attr("class", "legend-item").style("cursor", "pointer");
+
+    averageItem.append("span")
+      .style("background-color", "black")
+      .style("width", "12px")
+      .style("height", "12px")
+      .style("display", "inline-block")
+      .style("margin-right", "5px");
+
+    averageItem.append("span").text("Class Average");
+
+    averageItem
+      .on("mouseenter", () => {
+        svgHR.selectAll(`.line-hr-mean`).attr("opacity", 1);
+        svgTemp.selectAll(`.line-temp-mean`).attr("opacity", 1);
+      })
+      .on("mouseleave", () => {
+        updateLineVisibility();
+      })
+      .on("click", function () {
+        if (clickedStudents.has('average')) {
+          clickedStudents.delete('average');
+          d3.select(this).classed("selected", false);
+        } else {
+          clickedStudents.add('average');
+          d3.select(this).classed("selected", true);
+        }
+        updateLineVisibility();
+      });
+
+    updateLineVisibility();
   });
 }
