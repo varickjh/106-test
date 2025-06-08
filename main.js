@@ -1,34 +1,29 @@
 const studentColorScale = d3.scaleOrdinal(d3.schemeCategory10);
-const tooltip = d3.select("body")
-  .append("div")
+
+// Create tooltip div for the individual student charts
+const studentTooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
-  .style("position", "absolute")
-  .style("padding", "6px 10px")
-  .style("background", "#fff")
-  .style("border", "1px solid #ccc")
-  .style("border-radius", "4px")
-  .style("pointer-events", "none")
-  .style("font-size", "12px")
-  .style("box-shadow", "0 2px 6px rgba(0,0,0,0.1)")
   .style("display", "none");
 
 // change 
-let exam = 'midterm1'; // or any default exam type
+let exam = 'midterm1'; // Default exam type
 document.querySelectorAll(".exam-choice").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".exam-choice").forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
-    exam = btn.getAttribute("data-value");
+      btn.addEventListener("click", () => {
+        // Remove existing selection styling
+        document.querySelectorAll(".exam-choice").forEach(b => b.classList.remove("selected"));
+        
+        // Mark new selection
+        btn.classList.add("selected");
+        exam = btn.getAttribute("data-value");
 
-    const hiddenSelect = document.getElementById("examType");
-    if (hiddenSelect) hiddenSelect.value = exam;
+        // Store value if syncing with hidden input
+        const hiddenSelect = document.getElementById("examType");
+        if (hiddenSelect) hiddenSelect.value = exam;
 
-    loadAndPlot();  // 🟢 this is what triggers chart rendering
-
-    setTimeout(() => Reveal.next(), 500);
-  });
-});
-
+        // Wait a moment for visual feedback, then move to next slide
+        setTimeout(() => Reveal.next(), 500); // optional delay for smoothness
+      });
+    });
 
 function loadAndPlot() {
     const inputHR = parseFloat(document.getElementById("avgHR").value);
@@ -102,14 +97,20 @@ function loadAndPlot() {
             takeaway.textContent = `On average, ${closest}'s heart rate was lower than the rest of the class in this exam.`;
             // add a <br>
             takeaway.appendChild(document.createElement("br"));
-            finalTakeaway.textContent = `These results indicates lower stress levels or nervousness during the exam, which may explain ${closest}'s better exam performance with his score of ${score}.`;
+            finalTakeaway.textContent = `These results indicates lower stress levels or nervousness during the exam, which may explain ${closest}'s exam performance with his score of ${score}. `;
+            finalTakeaway.appendChild(document.createElement("br"));
+            finalTakeaway.textContent += `If this score was lower than you expected, it may be because ${closest} mastered the topics of the exam!`;
+
           }
         } else {
           if (takeaway) {
             takeaway.textContent = `On average, ${closest}'s heart rate was above the class average for more than half of the exam.`;
             // add a <br>
             takeaway.appendChild(document.createElement("br"));
-            finalTakeaway.textContent = `These results indicates higher stress levels or nervousness during the exam, which may explain ${closest}'s worse exam performance with his score of ${score}.`;
+            finalTakeaway.textContent = `These results indicates higher stress levels or nervousness during the exam, which may explain ${closest}'s exam performance with his score of ${score}.`;
+            finalTakeaway.appendChild(document.createElement("br"));
+            // add more text to finalTakeaway
+            finalTakeaway.textContent += `If this score was higher than you expected, it may be because ${closest} mastered the topics of the exam!`;
           }
         }
         // Check if student's HR cycle is constant or spiking
@@ -137,13 +138,13 @@ function loadAndPlot() {
         const tempTakeaway = document.getElementById("mean-takeaway-temp");
         if (studentData.length > 0 && belowCount / studentData.length >= 0.5) {
           if (tempTakeaway) {
-            tempTakeaway.textContent = `On average, ${closest}'s temperature was lower than the rest of the class in this exam.`;
+            tempTakeaway.textContent = `On average, ${closest}'s room temperature was colder than the rest of the class in this exam.`;
             // add a <br>
             tempTakeaway.appendChild(document.createElement("br"));
           }
         } else {
           if (takeaway) {
-            tempTakeaway.textContent = `On average, ${closest}'s temperature was above the class average for more than half of the exam.`;
+            tempTakeaway.textContent = `On average, ${closest}'s room temperature was warmer than the rest of the class.`;
             // add a <br>
             tempTakeaway.appendChild(document.createElement("br"));
           }
@@ -161,12 +162,6 @@ function loadAndPlot() {
           height = +svg.attr("height") - margin.top - margin.bottom;
   
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-    const overlay = g.append("rect")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("fill", "none")
-      .attr("pointer-events", "all");
   
     const x = d3.scaleTime()
                 .domain(d3.extent(data, d => d[xKey]))
@@ -185,6 +180,13 @@ function loadAndPlot() {
      .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%H:%M")));
   
     g.append("g").call(d3.axisLeft(y));
+    
+    // Add invisible overlay for better mouse interaction
+    g.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .style("fill", "none")
+      .style("pointer-events", "all");
   
     // Student line
     g.append("path")
@@ -202,7 +204,6 @@ function loadAndPlot() {
       .attr("stroke-width", 2)
       .attr("stroke-dasharray", "5,5")
       .attr("d", line);
-
   
     g.selectAll("circle")
      .data(data)
@@ -212,42 +213,7 @@ function loadAndPlot() {
      .attr("cy", d => y(d[yKey]))
      .attr("r", 3)
      .attr("fill", studentColor);
-
-     const focusDot = g.append("circle")
-      .attr("r", 5)
-      .attr("stroke", studentColor)
-      .attr("fill", "white")
-      .attr("stroke-width", 2)
-      .style("display", "none");
-
-    overlay.on("mousemove", function(event) {
-      const [mouseX] = d3.pointer(event);
-      const x0 = x.invert(mouseX);
-
-      const bisect = d3.bisector(d => d[xKey]).left;
-      const i = bisect(data, x0, 1);
-      const d0 = data[i - 1];
-      const d1 = data[i];
-      const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
-
-      focusDot
-        .attr("cx", x(d[xKey]))
-        .attr("cy", y(d[yKey]))
-        .style("display", "block");
-
-      tooltip
-        .style("left", (event.pageX + 12) + "px")
-        .style("top", (event.pageY - 40) + "px")
-        .style("display", "block")
-        .html(`<b>Time:</b> ${d3.timeFormat("%H:%M")(d[xKey])}<br>
-               <b>${yLabel}:</b> ${d[yKey].toFixed(1)}`);
-    });
-
-overlay.on("mouseout", function() {
-  tooltip.style("display", "none");
-  focusDot.style("display", "none");
-});
-
+  
     g.append("text")
      .attr("x", -margin.left + 10)
      .attr("y", -5)
@@ -291,6 +257,87 @@ overlay.on("mouseout", function() {
       .attr("y", 25)
       .text("Exam Mean")
       .style("font-size", "12px");
+      
+    // Add tooltip elements
+    const hoverLine = g.append("line")
+      .attr("stroke", "gray")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "4")
+      .style("display", "none")
+      .attr("y1", 0)
+      .attr("y2", height);
+      
+    const studentDot = g.append("circle")
+      .attr("r", 6)
+      .attr("fill", studentColor)
+      .style("display", "none");
+      
+    const meanDot = g.append("circle")
+      .attr("r", 6)
+      .attr("fill", "black")
+      .style("display", "none");
+      
+    // Add mouse event handlers
+    g.on("mousemove", function(event) {
+      const [mouseX] = d3.pointer(event);
+      const mouseTime = x.invert(mouseX);
+      
+      // Find closest data points
+      const closestStudentPoint = data.reduce((prev, curr) => 
+        Math.abs(curr[xKey] - mouseTime) < Math.abs(prev[xKey] - mouseTime) ? curr : prev
+      );
+      
+      const closestMeanPoint = meanData.reduce((prev, curr) => 
+        Math.abs(curr[xKey] - mouseTime) < Math.abs(prev[xKey] - mouseTime) ? curr : prev
+      );
+      
+      // Show vertical line
+      hoverLine
+        .attr("x1", x(closestStudentPoint[xKey]))
+        .attr("x2", x(closestStudentPoint[xKey]))
+        .style("display", "block");
+        
+      // Show data points
+      studentDot
+        .attr("cx", x(closestStudentPoint[xKey]))
+        .attr("cy", y(closestStudentPoint[yKey]))
+        .style("display", "block");
+        
+      meanDot
+        .attr("cx", x(closestMeanPoint[xKey]))
+        .attr("cy", y(closestMeanPoint[yKey]))
+        .style("display", "block");
+        
+      // Format time for display
+      const timeFormat = d3.timeFormat("%H:%M:%S");
+      const formattedTime = timeFormat(closestStudentPoint[xKey]);
+      
+      // Update tooltip
+      studentTooltip
+        .style("display", "block")
+        .style("left", (event.pageX + 15) + "px")
+        .style("top", (event.pageY - 30) + "px")
+        .html(`
+          <div style="text-align: left;">
+            <strong>Time: ${formattedTime}</strong><br/>
+            <div style="margin-top: 5px;">
+              <span style="color:${studentColor}">● </span>
+              <strong>Student:</strong> ${Math.round(closestStudentPoint[yKey])} bpm
+            </div>
+            <div style="margin-top: 3px;">
+              <span style="color:black">● </span>
+              <strong>Class Mean:</strong> ${Math.round(closestMeanPoint[yKey])} bpm
+            </div>
+          </div>
+        `);
+    })
+    .on("mouseout", function() {
+      // Hide tooltip and associated elements
+      studentTooltip.style("display", "none");
+      hoverLine.style("display", "none");
+      studentDot.style("display", "none");
+      meanDot.style("display", "none");
+    });
   }
 
   function drawTempLineChart(data, xKey, yKey, svgSelector, yLabel, meanData, studentColor) {
@@ -302,13 +349,7 @@ overlay.on("mouseout", function() {
           height = +svg.attr("height") - margin.top - margin.bottom;
   
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-    const overlay = g.append("rect")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("fill", "none")
-      .attr("pointer-events", "all");
-
+  
     const x = d3.scaleTime()
                 .domain(d3.extent(data, d => d[xKey]))
                 .range([0, width]);
@@ -326,6 +367,13 @@ overlay.on("mouseout", function() {
      .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%H:%M")));
   
     g.append("g").call(d3.axisLeft(y));
+    
+    // Add invisible overlay for better mouse interaction
+    g.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .style("fill", "none")
+      .style("pointer-events", "all");
   
     // Student line
     g.append("path")
@@ -353,41 +401,6 @@ overlay.on("mouseout", function() {
      .attr("cy", d => y(d[yKey]))
      .attr("r", 3)
      .attr("fill", studentColor);
-
-     const focusDot = g.append("circle")
-      .attr("r", 5)
-      .attr("stroke", studentColor)
-      .attr("fill", "white")
-      .attr("stroke-width", 2)
-      .style("display", "none");
-
-      overlay.on("mousemove", function(event) {
-        const [mouseX] = d3.pointer(event);
-        const x0 = x.invert(mouseX);
-
-        const bisect = d3.bisector(d => d[xKey]).left;
-        const i = bisect(data, x0, 1);
-        const d0 = data[i - 1];
-        const d1 = data[i];
-        const d = x0 - d0[xKey] > d1[xKey] - x0 ? d1 : d0;
-
-        focusDot
-          .attr("cx", x(d[xKey]))
-          .attr("cy", y(d[yKey]))
-          .style("display", "block");
-
-        tooltip
-          .style("left", (event.pageX + 12) + "px")
-          .style("top", (event.pageY - 40) + "px")
-          .style("display", "block")
-          .html(`<b>Time:</b> ${d3.timeFormat("%H:%M")(d[xKey])}<br>
-                 <b>${yLabel}:</b> ${d[yKey].toFixed(1)}`);
-      });
-
-      overlay.on("mouseout", function() {
-        tooltip.style("display", "none");
-        focusDot.style("display", "none");
-      });
   
     g.append("text")
      .attr("x", -margin.left + 10)
@@ -433,6 +446,87 @@ overlay.on("mouseout", function() {
       .attr("y", 25)
       .text("Exam Mean")
       .style("font-size", "12px");
+      
+    // Add tooltip elements
+    const hoverLine = g.append("line")
+      .attr("stroke", "gray")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "4")
+      .style("display", "none")
+      .attr("y1", 0)
+      .attr("y2", height);
+      
+    const studentDot = g.append("circle")
+      .attr("r", 6)
+      .attr("fill", studentColor)
+      .style("display", "none");
+      
+    const meanDot = g.append("circle")
+      .attr("r", 6)
+      .attr("fill", "black")
+      .style("display", "none");
+      
+    // Add mouse event handlers
+    g.on("mousemove", function(event) {
+      const [mouseX] = d3.pointer(event);
+      const mouseTime = x.invert(mouseX);
+      
+      // Find closest data points
+      const closestStudentPoint = data.reduce((prev, curr) => 
+        Math.abs(curr[xKey] - mouseTime) < Math.abs(prev[xKey] - mouseTime) ? curr : prev
+      );
+      
+      const closestMeanPoint = meanData.reduce((prev, curr) => 
+        Math.abs(curr[xKey] - mouseTime) < Math.abs(prev[xKey] - mouseTime) ? curr : prev
+      );
+      
+      // Show vertical line
+      hoverLine
+        .attr("x1", x(closestStudentPoint[xKey]))
+        .attr("x2", x(closestStudentPoint[xKey]))
+        .style("display", "block");
+        
+      // Show data points
+      studentDot
+        .attr("cx", x(closestStudentPoint[xKey]))
+        .attr("cy", y(closestStudentPoint[yKey]))
+        .style("display", "block");
+        
+      meanDot
+        .attr("cx", x(closestMeanPoint[xKey]))
+        .attr("cy", y(closestMeanPoint[yKey]))
+        .style("display", "block");
+        
+      // Format time for display
+      const timeFormat = d3.timeFormat("%H:%M:%S");
+      const formattedTime = timeFormat(closestStudentPoint[xKey]);
+      
+      // Update tooltip
+      studentTooltip
+        .style("display", "block")
+        .style("left", (event.pageX + 15) + "px")
+        .style("top", (event.pageY - 30) + "px")
+        .html(`
+          <div style="text-align: left;">
+            <strong>Time: ${formattedTime}</strong><br/>
+            <div style="margin-top: 5px;">
+              <span style="color:${studentColor}">● </span>
+              <strong>Student:</strong> ${closestStudentPoint[yKey].toFixed(1)} °C
+            </div>
+            <div style="margin-top: 3px;">
+              <span style="color:black">● </span>
+              <strong>Class Mean:</strong> ${closestMeanPoint[yKey].toFixed(1)} °C
+            </div>
+          </div>
+        `);
+    })
+    .on("mouseout", function() {
+      // Hide tooltip and associated elements
+      studentTooltip.style("display", "none");
+      hoverLine.style("display", "none");
+      studentDot.style("display", "none");
+      meanDot.style("display", "none");
+    });
   }
   
   // Update slider labels in real time
