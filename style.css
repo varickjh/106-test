@@ -70,23 +70,33 @@
 
 #legend {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-wrap: wrap;           /* Allow wrapping */
+  justify-content: center;   /* Center items */
   font-size: 14px;
+  gap: 10px;                 /* Space between items */
   margin-top: 10px;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 0;          /* Remove vertical stacking margin */
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #f8f8f8;
+  transition: background 0.2s ease;
+}
+
+.legend-item:hover {
+  background: #f0f0f0;
 }
 
 .legend-item.selected {
   font-weight: bold;
-  background-color: #f0f8ff;
-  border-radius: 5px;
-  padding: 3px 6px;
+  background-color: #e0f2ff;
 }
 
 .legend-item span:first-child {

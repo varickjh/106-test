@@ -324,12 +324,32 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
     studentsSorted.forEach(s => {
       const item = legend.append("div").attr("class", "legend-item").style("cursor", "pointer");
 
-      item.append("span")
-        .style("background-color", color(s))
-        .style("width", "12px")
-        .style("height", "12px")
-        .style("display", "inline-block")
-        .style("margin-right", "5px");
+      const icon = item.append("svg")
+        .attr("width", 16)
+        .attr("height", 16)
+        .style("margin-right", "6px");
+
+      if (s === "Class Average") {
+        // Draw a star using SVG path
+        icon.append("path")
+          .attr("d", "M8 0 L10 6 L16 6 L11 9 L13 15 L8 11 L3 15 L5 9 L0 6 L6 6 Z")
+          .attr("fill", "#666") // or your preferred color
+          .attr("transform", "scale(0.8) translate(1,1)");
+      } else {
+        // Draw "person" icon for student lines
+        icon.append("circle")
+          .attr("cx", 7)
+          .attr("cy", 4)
+          .attr("r", 3)
+          .attr("fill", color(s));
+
+        icon.append("rect")
+          .attr("x", 4)
+          .attr("y", 8)
+          .attr("width", 6)
+          .attr("height", 8)
+          .attr("fill", color(s));
+      }
 
       item.append("span").text(`${s}${scoreLabelFor(s)}`);
 
