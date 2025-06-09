@@ -99,7 +99,8 @@ function loadAndPlot() {
             takeaway.appendChild(document.createElement("br"));
             finalTakeaway.textContent = `These results indicates lower stress levels or nervousness during the exam, which may explain ${closest}'s exam performance with his score of ${score}. `;
             finalTakeaway.appendChild(document.createElement("br"));
-            finalTakeaway.textContent += `If this score was lower than you expected, it may be because ${closest} mastered the topics of the exam!`;
+            finalTakeaway.textContent += ` `;
+            finalTakeaway.textContent += `If this score seems lower than you expected, remember that ${closest}'s cognitive abilities and mastery of the exam topics also plays a role!`;
 
           }
         } else {
@@ -110,7 +111,8 @@ function loadAndPlot() {
             finalTakeaway.textContent = `These results indicates higher stress levels or nervousness during the exam, which may explain ${closest}'s exam performance with his score of ${score}.`;
             finalTakeaway.appendChild(document.createElement("br"));
             // add more text to finalTakeaway
-            finalTakeaway.textContent += `If this score was higher than you expected, it may be because ${closest} mastered the topics of the exam!`;
+            finalTakeaway.textContent += ` `;
+            finalTakeaway.textContent += `If this score seems higher than you expected, remember that ${closest}'s cognitive abilities and mastery of the exam topics also plays a role!`;
           }
         }
         // Check if student's HR cycle is constant or spiking
