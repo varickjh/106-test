@@ -18,7 +18,7 @@
   <div class="reveal">
     <div class="slides">
       <!-- Main Title Slide -->
-      <section data-auto-animate>
+      <section data-auto-animate c;ass="title-slide">
         <h1 class="floating" style="font-size: 2em; font-weight: 800; color: #0d47a1; margin-top: 10%;">THE PRESSURE PARADOX</h1>
         <p class="floating" style="font-size: 1em; font-weight: 600; margin-top: -10px;">Does Stress Fuel or Fracture Exam Performance?</p>
         
@@ -46,12 +46,12 @@
         <p style="font-size: 1em; font-weight: 600; color: #a1140d; margin-top: -10px;">Does Stress Fuel or Fracture Exam Performance?</p>
         <div style="text-align: center; max-width: 900px; margin: auto;">
           <p class="delay-1 floating" style="font-size: 0.7em; line-height: 1.6em; margin-bottom: 20px;">
-            It is a common notion that the more stressed you are, the worse your exam grades will be.
+            It is a common notion that the <b>more stressed you are, the worse your exam grades will be.</b>
             Well, is that true? We don’t know! <br>Let’s find out together.
           </p>
           <p class="delay-2 floating" style="font-size: 0.5em; line-height: 1.6em; margin-bottom: 40px;">
-            We have exam stress data and the corresponding exam score data of 10 students.<br>
-            Which one of them is the most similar to you based on your stress levels? How well would you do?
+            <i>We have exam stress data of 10 students and their corresponding exam scores.<br>
+            Which one of them is the <b>most similar to you</b> based on your stress levels? How well would you do?</i>
           </p>
 
           <br>
@@ -81,12 +81,13 @@
           </div>
           <br><br>
           <p class="fade-in" style="margin-top: 10px; font-size: 0.5em; color: #444; opacity: 60%;">
-            Midterm 1 is the exam with the lowest stakes.<br>
+            Midterm 1 is the exam with the <b>lowest stakes</b>.<br>
             <br>
-            Midterm 2 is the exam with moderate stakes, depending on how you did for Midterm 1.<br>
-            If you do well on Midterm 1, you can relax for the rest of the semester until your final. However, if you do poorly, Midterm 2 is more important than ever now.<br>
+            Midterm 2 is the exam with <b>moderate stakes</b>, depending on how you did for Midterm 1.<br>
             <br>
-            Final is the exam with the highest stakes.<br>
+            <i>(If you do well on Midterm 1, you can relax for the rest of the semester until your final. However, if you do poorly, Midterm 2 is more important than ever now.)</i><br>
+            <br>
+            Final is the exam with the <b>highest stakes.</b><br>
           </p>
         </div>
       </section>
@@ -103,7 +104,7 @@
         <p class="floating" style="font-size: 1.1em; font-weight: 800; margin-top: 10%;">How Nervous Do You Think You Will Be?</p>
         <p style="margin-top: 10px; font-size: 0.5em; color: #444; opacity: 60%;">
           Lower heart rates indicate lower stress levels, while higher heart rates indicate higher stress levels.<br>
-          The average heart rate of a healthy adult is around 90 beats per minute (bpm).<br>
+          <b>The average heart rate of a healthy adult is around 90 beats per minute (bpm)</b>.<br>
           Adjust the slider to set your average heart rate for the exam.
         </p>
         <label for="avgHR" style="font-size: 0.7em;">Average Heart Rate:</label>
@@ -111,7 +112,7 @@
         <span id="hrValue" style="font-size: 0.7em;">90</span>
         <br><br>
         <p style="margin-top: 10px; font-size: 0.5em; color: #444; opacity: 60%;">
-          The average room temperature is around 25°C.<br>
+          <b>The average room temperature is around 25°C.</b><br>
           Adjust the slider to set your average room temperature for the exam.
         </p>
         <label for="avgTemp" style="font-size: 0.7em;">Average Room Temperature (°C):</label>
@@ -227,8 +228,8 @@
       </section>
       <!-- Slide 6: Charts of All Students -->
       <section>
-        <p style="font-size: 0.5em; color: #444; opacity: 50;">
-          The charts below show the heart rate and temperature data of all students during the exam.<br></p>
+        <p style="font-size: 0.4em; color: #444; opacity: 50;">
+          The charts below show the heart rate and temperature data of all students during the exam.<br>Compare student(s) and the class average!</p>
         <p class="floating" style="font-size: 0.5em; color: black; font-weight: bold;">Select the exam you want to see:</p>
         <div id="examButtons" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
             <button class="floating exam-select" data-value="midterm1" style="font-size: 0.4em;">Midterm 1</button>
@@ -245,7 +246,12 @@
             </div>
           </div>
         </div>
-        <p style="font-size: 0.4em; color: rgb(97, 97, 97); font-weight: bold;">Select one or more students:</p>
+        <div style="text-align: center;">
+          <label style="font-size: 0.4em; color: rgb(97, 97, 97); font-weight: bold;">
+            <input type="checkbox" id="sortToggle" style="transform: scale(1.2); margin-right: 6px;">
+            Sort by score (high-low)
+          </label>
+        </div>
         <div id="legend" style="min-width: 120px;"></div>
         </div>
 
@@ -274,6 +280,10 @@
               currentExam = button.dataset.value;
               renderExamCharts("#all-hr-chart", "#all-temp-chart", "#legend", currentExam);
             });
+          });
+
+          document.querySelector('#sortToggle')?.addEventListener('change', () => {
+            renderExamCharts("#all-hr-chart", "#all-temp-chart", "#legend", currentExam);
           });
         </script>
       </section>

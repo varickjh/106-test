@@ -11,7 +11,6 @@ const tooltip = d3.select("body").append("div")
   .style("border-radius", "4px")
   .style("box-shadow", "0 0 4px rgba(0,0,0,0.2)")
 
-
 function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam = 'midterm1') {
   // 
   const margin = { top: 20, right: 30, bottom: 30, left: 60 };
@@ -299,7 +298,19 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
       hoverLineTemp.style("display", "none");
     });
 
-    const studentsSorted = students.slice().sort((a, b) => +a.slice(1) - +b.slice(1));
+    // Before rendering legend items
+    const shouldSortByScore = document.querySelector('#sortToggle')?.checked;
+
+    if (shouldSortByScore) {
+      students.sort((a, b) => {
+        const scoreA = parseFloat(studentScores[a]?.[exam]) || 0;
+        const scoreB = parseFloat(studentScores[b]?.[exam]) || 0;
+        return scoreB - scoreA; // descending
+      });
+    } else {
+      students.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    }
+    // const studentsSorted = students.slice().sort((a, b) => +a.slice(1) - +b.slice(1));
 
     const scoreLabelFor = s => {
       const examKey = exam.toLowerCase();
@@ -321,7 +332,7 @@ function renderExamCharts(hrSvgSelector, tempSvgSelector, legendContainer, exam 
     }
     // Legend
     const legend = d3.select(legendContainer).html("");
-    studentsSorted.forEach(s => {
+    students.forEach(s => {
       const item = legend.append("div").attr("class", "legend-item").style("cursor", "pointer");
 
       const icon = item.append("svg")
